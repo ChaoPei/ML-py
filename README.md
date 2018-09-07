@@ -1,3 +1,3 @@
-# machine-learning
+# Simple machine learning implementations with python
 
-* [K-means](https://github.com/ChaoPei/machine-learning/tree/master/K-means)
+* K-Means
