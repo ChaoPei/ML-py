@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 import datetime
 import sys
+import os
 
 from kmeans import KMeansClassifier
 
@@ -16,7 +17,8 @@ def load_data(path):
 
 if __name__ == "__main__":
 
-    data = load_data("./data/test.txt")
+    project_dir = os.path.dirname(os.path.realpath(__file__))
+    data = load_data(os.path.join(project_dir, 'data', 'test.txt'))
     k = 3
     classifier = KMeansClassifier(k)
     classifier.fit(data)
@@ -47,6 +49,6 @@ if __name__ == "__main__":
         plt.title("SSE={:.2f}".format(sse))
 
     plt.axis([-7, 7, -7, 7])
-    outname = "./result/{}_clusters_".format(k) + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".png"
+    outname = os.path.join(project_dir, "result", "{}_clusters_".format(k) + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".png")
     plt.savefig(outname)
     plt.show()
