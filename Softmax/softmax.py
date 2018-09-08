@@ -18,17 +18,17 @@ class SoftmaxClassifier():
                  learning_rate=0.45,
                  max_iters=1000,
                  weights_decay_lambda=0.0):
-        self.learning_rate = learning_rate  # 学习速率
-        self.max_iters = max_iters          # 最大迭代次数
-        self.weights_decay_lambda = weights_decay_lambda  # 权重衰减
+        self.learning_rate = learning_rate  # learning rate
+        self.max_iters = max_iters          # max iteration
+        self.weights_decay_lambda = weights_decay_lambda  # weight decay
 
     def calc_feature_result(self, x, i):
-        '''计算第i类特征和权重的指数结果'''
+        '''ith feature'''
 
         return math.exp(np.dot(x, self.weights[i]))
 
     def calc_probability(self, x, i):
-        '''计算第i类的分类概率'''
+        '''ith probability'''
 
         i_feas_res = self.calc_feature_result(x, i)
         all_feas_res = sum(
@@ -37,11 +37,11 @@ class SoftmaxClassifier():
         return i_feas_res / all_feas_res
 
     def calc_loss_gradient(self, X, labels):
-        '''计算批量代价函数的损失和梯度，函数公式：http://deeplearning.stanford.edu/wiki/index.php/Softmax%E5%9B%9E%E5%BD%92'''
+        '''loss function and it's gradient: http://deeplearning.stanford.edu/wiki/index.php/Softmax%E5%9B%9E%E5%BD%92'''
         
         k = len(set(labels))
         m, n = X.shape
-        # 标签二值化，将所属的类别设置为1，其余类别设置为0，便于计算softmax的损失
+        # label binary, max probality set to 1, others to 0.
         bin_labels = label_binarize(labels, classes=np.unique(labels).tolist()).reshape((m, k))
         # print("bin_labels shape: (%d, %d)" % (bin_labels.shape[0], bin_labels.shape[1]))
 
@@ -55,10 +55,10 @@ class SoftmaxClassifier():
         probilities = np.exp(results) / np.sum(np.exp(results), axis=0)
         # print("probilities shape: (%d, %d)" % (probilities.shape[0], probilities.shape[1]))
 
-        # 计算损失值
+        # calc loss value
         loss = (-1 / m) * np.sum(np.multiply(bin_labels, np.log(probilities).T)) \
             + self.weights_decay_lambda * np.sum(np.square(self.weights))
-        # 计算梯度
+        # calc gradient
         grad = (-1 / m) * (features.dot(bin_labels - probilities.T)).T  \
             + self.weights_decay_lambda * self.weights
 
@@ -86,7 +86,7 @@ class SoftmaxClassifier():
         return preds
 
 
-# 绘制结果图 
+# draw result
 def plot_res(preds, labels_test, features_test, learning_rate):
     s = set(preds)
     col = ['r', 'b', 'g', 'y', 'm']
@@ -113,7 +113,7 @@ def plot_res(preds, labels_test, features_test, learning_rate):
 
 if __name__ == "__main__":
 
-    # 生成数据: 特征是二维坐标，根据二维坐标位置分为五种类别
+    # generate data: feature is 2-D coordiant, 5 classes.
     features, labels = [], []
     for idx in range(1000):
         label = idx % 5
