@@ -8,3 +8,4 @@ CS231n/test.py
 test.py
 MNIST/mnist_test.csv
 MNIST/mnist_train_small.csv
+__pychache__

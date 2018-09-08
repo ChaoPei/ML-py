@@ -2,7 +2,7 @@
 
 
 '''
-k-means implement
+K-Means cluster implement
 '''
 
 import numpy as np
