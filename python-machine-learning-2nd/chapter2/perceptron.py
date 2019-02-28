@@ -28,9 +28,11 @@ class Perceptron(object):
             self.errors.append(error)
         return self
 
-    def predict(self, xi):
-        net_output = np.dot(xi, self.weights[1:]) + self.weights[0]
-        return np.where(net_output >= 0.0, 1, -1)
+    def net_input(self, X):
+        return np.dot(X, self.weights[1:]) + self.weights[0]
+
+    def predict(self, X):
+        return np.where(self.net_input(X) >= 0.0, 1, -1)
 
 
 def train_perceptron(X, y, verbose=True):

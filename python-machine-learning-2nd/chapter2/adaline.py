@@ -4,7 +4,7 @@ import pandas as pd
 from iris import load_iris_data, plot_decision_regions
 
 
-class AdalineBGD(object):
+class AdalineGD(object):
     def __init__(self, eta=0.01, n_iter=50, random_state=1):
         self.eta = eta
         self.n_iter = n_iter
@@ -16,7 +16,7 @@ class AdalineBGD(object):
         rng = np.random.RandomState(self.random_state)
         self.weights = rng.normal(loc=0.0, scale=0.01, size=X.shape[1] + 1)
         for i in range(self.n_iter):
-            output = self.net_output(X)
+            output = self.net_input(X)
             active = self.activation(output)
             errors = y - active
             # update by all samples
@@ -26,14 +26,14 @@ class AdalineBGD(object):
             self.costs.append(cost)
         return self
 
-    def net_output(self, X):
+    def net_input(self, X):
         return np.dot(X, self.weights[1:]) + self.weights[0]
 
-    def activation(self, X):
-        return X
+    def activation(self, z):
+        return z
 
     def predict(self, X):
-        res = self.activation(self.net_output(X))
+        res = self.activation(self.net_input(X))
         return np.where(res > 0.0, 1, -1)
 
 
@@ -48,14 +48,14 @@ class AdalineSGD(object):
         self.weights = None
         self.costs = []
 
-    def net_output(self, X):
+    def net_input(self, X):
         return np.dot(X, self.weights[1:]) + self.weights[0]
 
-    def activation(self, X):
-        return X
+    def activation(self, z):
+        return z
 
     def predict(self, X):
-        res = self.activation(self.net_output(X))
+        res = self.activation(self.net_input(X))
         return np.where(res > 0.0, 1, -1)
 
     def _init_weights(self, n):
@@ -70,7 +70,7 @@ class AdalineSGD(object):
         """
         SGD: update weights by one sample
         """
-        output = self.activation(self.net_output(xi))
+        output = self.activation(self.net_input(xi))
         error = (target - output)
         self.weights[1:] += self.eta * xi.dot(error)
         self.weights[0] += self.eta * error
@@ -110,14 +110,14 @@ def standardization(X):
 
 def lr_compare(X, y):
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 4))
-    ada1 = AdalineBGD(n_iter=10, eta=0.01)
+    ada1 = AdalineGD(n_iter=10, eta=0.01)
     ada1.fit(X, y)
     ax[0].plot(range(1, len(ada1.costs) + 1), np.log10(ada1.costs), marker='o')
     ax[0].set_xlabel('epoch')
     ax[0].set_ylabel('log(sum-squared-error')
     ax[0].set_title('Adaline-lr 0.01')
 
-    ada2 = AdalineBGD(n_iter=10, eta=0.0001).fit(X, y)
+    ada2 = AdalineGD(n_iter=10, eta=0.0001).fit(X, y)
     ax[1].plot(range(1, len(ada2.costs) + 1), ada2.costs, marker='o')
     ax[1].set_xlabel('epoch')
     ax[1].set_ylabel('log(sum-squared-error')
@@ -126,7 +126,7 @@ def lr_compare(X, y):
 
 
 def train_AdalineBGD(X, y):
-    ada = AdalineBGD(n_iter=15, eta=0.01)
+    ada = AdalineGD(n_iter=15, eta=0.01)
     ada.fit(X, y)
     plot_decision_regions(
         X,
